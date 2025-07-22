@@ -9,11 +9,25 @@ const UserSchema = new Schema({
     lastName: {type: String },
     email: {
         type: String, 
-        required: true
+        required: true,
+        validate: {
+            validator: (v) => {
+                const {error} = JoiField.email.validate(v);
+                if (error) throw new Error(error.details[0].message);
+                return true;
+            }
+        }
     },
     password: {
         type: String, 
-        required: true
+        required: true,
+        validate: {
+            validator: (v) => {
+                const {error} = JoiField.password.validate(v);
+                if (error) throw new Error.prototype(error.details[0].message);
+                return true;
+            }
+        }
     },
     bio:{type: String},
     photoUrl: {
