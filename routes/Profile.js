@@ -1,10 +1,9 @@
 const express=require('express');
 const router=express.Router();
-const userAuth=require('../middleware/userAuth');
-const User=require('../models/user');
+const userAuth =require('../middleware/userAuth');
 const {editProfileValidation}=require('../utils/validation');
 
-router.get('/get', async (req, res) => {
+router.get('/get', userAuth, async (req, res) => {
     try {
         const userId = req.user._id;
         const user = await User.findById(userId).select('-password');
@@ -18,7 +17,7 @@ router.get('/get', async (req, res) => {
     }
 });
 
-router.patch('/edit', async (req, res) => {
+router.patch('/edit', userAuth, async (req, res) => {
     try {
         if (!req.body || Object.keys(req.body).length === 0) {
             return res.status(400).json({message: 'Invalid body'});

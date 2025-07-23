@@ -8,7 +8,7 @@ const { signupValidation, loginValidation } = require('../utils/validation');
 const userAuth = require("../middleware/userAuth");
 
 
-router.post('/signup', async (req, res)=> {
+router.post('/signup', userAuth, async (req, res)=> {
     const {error} = signupValidation(req.body);
     if (error) return res.status(411).json({message: error.details[0].message});
 
@@ -45,11 +45,11 @@ router.post('/signup', async (req, res)=> {
     }
     catch (err) {
         console.error("Signup Error:", err);
-        return res.status(500).json({message: 'Internal Server Error'});
+        return res.status(500).json({message: 'Internal Server Error', token, user: userObj});
     }
 })
 
-router.post('/login', async (req,res) => {
+router.post('/login', userAuth, async (req,res) => {
     const {error} = loginValidation(req.body);
     if (error) return res.status(411).json({message: error.details[0].message});
 
@@ -75,7 +75,7 @@ router.post('/login', async (req,res) => {
         res.status(200).json({message: 'User logged in successfully', user: userObj})
     }
     catch (err) {
-        console.error("Signup Error:", err);
+        console.error("Login Error:", err);
         return res.status(500).json({ message: 'Internal server error' });
     }
 });
