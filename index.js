@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const {connectDb} = require('./utils/database'); // Assuming utils.js/database exports connectDb
+const {connectDb} = require('./utils/database');
 const cors = require("cors");
 const cookieParser = require('cookie-parser');
 require('dotenv').config(); 
