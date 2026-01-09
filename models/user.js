@@ -6,35 +6,23 @@ const UserSchema = new Schema({
         type: String, 
         required: true
     },
-    lastName: {type: String },
+    lastName: {type: String, default: ""},
     email: {
         type: String, 
         required: true,
-        validate: {
-            validator: (v) => {
-                const {error} = JoiField.email.validate(v);
-                if (error) throw new Error(error.details[0].message);
-                return true;
-            }
-        }
+        unique: true,
     },
     password: {
         type: String, 
         required: true,
-        validate: {
-            validator: (v) => {
-                const {error} = JoiField.password.validate(v);
-                if (error) throw new Error.prototype(error.details[0].message);
-                return true;
-            }
-        }
     },
-    bio:{type: String},
+    bio:{type: String, default: ""},
     photoUrl: {
         type: String, 
         default: ""
     },
 
-},{timestamps: true});
+},{timestamps: true}
+);
 
 module.exports=mongoose.model('User', UserSchema);

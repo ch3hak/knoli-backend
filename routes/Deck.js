@@ -18,7 +18,7 @@ router.post('/new', userAuth, async(req, res) => {
     try{
         const userId=req.user._id
         const { title, description, isPublic, tags } = req.body;
-        const deck = await Deck.create({ title, description, isPublic, tags, userId });
+        const deck = await Deck.create({ title, description, isPublic, tags, userId:userId });
         res.status(201).json({ message: 'Created new deck', data: deck });
     }
     catch (err) {
@@ -33,7 +33,7 @@ router.patch('/update/:id', userAuth, async (req, res) => {
       const { title, description, isPublic, tags } = req.body;
   
       const updated = await Deck.findOneAndUpdate(
-        { _id: deckId, owner: userId },
+        { _id: deckId, userId: userId },
         { $set: { title, description, isPublic, tags } },
         { new: true }
       );
@@ -50,7 +50,7 @@ router.delete('/delete/:id', userAuth, async (req, res) => {
       const deckId = req.params.id;
       const userId = req.user._id;
   
-      const deleted = await Deck.findOneAndDelete({ _id: deckId, owner: userId });
+      const deleted = await Deck.findOneAndDelete({ _id: deckId, userId: userId });
       if (!deleted) return res.status(404).json({ message: 'Deck not found' });
   
       await Flashcard.deleteMany({ deck: deckId });

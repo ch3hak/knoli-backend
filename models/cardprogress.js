@@ -15,8 +15,8 @@ const CardProgressSchema = new Schema ({
     },
     status: {
         type: String,
-        enum: [red, yellow, green], 
-        default: red
+        enum: ['red', 'yellow', 'green'],
+        default: 'red'
     },
     correctStreak: {
         type: Number,

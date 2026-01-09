@@ -8,8 +8,8 @@ const { signupValidation, loginValidation } = require('../utils/validation');
 const userAuth = require("../middleware/userAuth");
 
 
-router.post('/signup', userAuth, async (req, res)=> {
-    const {error} = signupValidation(req.body);
+router.post('/signup', async (req, res)=> {
+    const {error} = signupValidation.validate(req.body);
     if (error) return res.status(411).json({message: error.details[0].message});
 
     const {firstName, email, password} = req.body;
@@ -32,8 +32,8 @@ router.post('/signup', userAuth, async (req, res)=> {
 
         res.cookie("token",token,{
             httpOnly: true,
-            secure: true,
-            sameSite: 'none',
+            secure: false,
+            sameSite: 'lax',
             path:'/',
             maxAge:3600000*24
         })
@@ -45,12 +45,12 @@ router.post('/signup', userAuth, async (req, res)=> {
     }
     catch (err) {
         console.error("Signup Error:", err);
-        return res.status(500).json({message: 'Internal Server Error', token, user: userObj});
+        return res.status(500).json({message: 'Internal Server Error'});
     }
 })
 
-router.post('/login', userAuth, async (req,res) => {
-    const {error} = loginValidation(req.body);
+router.post('/login', async (req,res) => {
+    const {error} = loginValidation.validate(req.body);
     if (error) return res.status(411).json({message: error.details[0].message});
 
     const {email,password} = req.body;
@@ -64,8 +64,8 @@ router.post('/login', userAuth, async (req,res) => {
         const token=jwt.sign({_id:user._id},process.env.JWT_KEY,{expiresIn:'1d'});
         res.cookie("token",token,{
             httpOnly: true,
-            secure: true,
-            sameSite: 'none',
+            secure: false,
+            sameSite: 'lax',
             path:'/',
             maxAge:3600000*24
         })
@@ -83,8 +83,8 @@ router.post('/login', userAuth, async (req,res) => {
 router.post('/logout', (req, res) => {
     res.cookie("token", null, {
         httpOnly: true,
-        secure: true,
-        sameSite: 'none',
+        secure: false,
+        sameSite: 'lax',
         path: '/',
         expires: new Date(Date.now())
     });
