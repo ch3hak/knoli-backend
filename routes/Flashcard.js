@@ -9,7 +9,7 @@ router.get('/getAll/:deckId', userAuth, async (req, res) => {
       const userId = req.user._id;
       const deckId = req.params.deckId;
   
-      const deck = await Deck.findOne({ _id: deckId, userId: userId });
+      const deck = await Deck.findOne({ _id: deckId, user: userId });
       if (!deck) return res.status(404).json({ message: 'Deck not found' });
   
       const cards = await Flashcard.find({ deck: deckId });
@@ -25,7 +25,7 @@ router.post('/new/:deckId', userAuth, async (req, res) => {
       const deckId = req.params.deckId;
       const { front, back, media = {}, tags = [] } = req.body;
   
-      const deck = await Deck.findOne({ _id: deckId, userId: userId });
+      const deck = await Deck.findOne({ _id: deckId, user: userId });
       if (!deck) return res.status(404).json({ message: 'Deck not found' });
   
       const card = await Flashcard.create({ deck: deckId, front, back, media, tags });
@@ -42,7 +42,7 @@ router.patch('/update/:id', userAuth, async (req, res) => {
       const { front, back, media, tags } = req.body;
   
       const card = await Flashcard.findById(cardId).populate('deck');
-      if (!card || card.deck.userId.toString() !== userId.toString()) {
+      if (!card || card.deck.user.toString() !== userId.toString()) {
         return res.status(404).json({ message: 'Flashcard not found' });
       }
   
@@ -63,13 +63,14 @@ router.delete('/delete/:id', userAuth, async (req, res) => {
       const cardId = req.params.id;
       const userId = req.user._id;
       const card = await Flashcard.findById(cardId).populate('deck');
-      if (!card || card.deck.userId.toString() !== userId.toString()) {
+      if (!card || card.deck.user.toString() !== userId.toString()) {
         return res.status(404).json({ message: 'Flashcard not found' });
       }
   
-      await card.remove();
+      await Flashcard.deleteOne({ _id: cardId });
       res.status(200).json({ message: 'Deleted flashcard', data: card });
     } catch (err) {
+      console.error('Error deleting flashcard:', err);
       res.status(500).json({ message: 'Internal Server Error In Deleting Flashcard' });
     }
 });

@@ -7,7 +7,7 @@ const DeckSchema = new Schema ({
         required: true
     },
     description: String,
-    userId: {
+    user: {
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: true
