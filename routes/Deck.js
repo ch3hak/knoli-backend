@@ -60,4 +60,70 @@ router.delete('/delete/:id', userAuth, async (req, res) => {
     }
 });
 
-module.exports=router;
+// GET deck XP
+router.get('/xp/:id', userAuth, async (req, res) => {
+  try {
+      const deckId = req.params.id;
+      const userId = req.user._id;
+      
+      const deck = await Deck.findOne({ _id: deckId, user: userId });
+      
+      if (!deck) {
+          return res.status(404).json({ message: 'Deck not found' });
+      }
+      
+      res.status(200).json({
+          data: {
+              level: deck.level || 1,
+              xp: deck.xp || 0,
+              xpToNextLevel: deck.xpToNextLevel || 100
+          }
+      });
+  } catch (err) {
+      res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+router.post('/xp/:id', userAuth, async (req, res) => {
+  try {
+      const deckId = req.params.id;
+      const userId = req.user._id;
+      const { xpToAdd } = req.body;
+      
+      const deck = await Deck.findOne({ _id: deckId, user: userId });
+      
+      if (!deck) {
+          return res.status(404).json({ message: 'Deck not found' });
+      }
+      
+      let currentXP = (deck.xp || 0) + xpToAdd;
+      let currentLevel = deck.level || 1;
+      let xpToNext = deck.xpToNextLevel || 100;
+      let leveledUp = false;
+      
+      while (currentXP >= xpToNext) {
+          currentXP -= xpToNext;
+          currentLevel++;
+          xpToNext = Math.floor(xpToNext * 1.5);
+          leveledUp = true;
+      }
+      
+      deck.level = currentLevel;
+      deck.xp = currentXP;
+      deck.xpToNextLevel = xpToNext;
+      await deck.save();
+      
+      res.status(200).json({
+          data: {
+              level: currentLevel,
+              xp: currentXP,
+              xpToNextLevel: xpToNext,
+              leveledUp
+          }
+      });
+  } catch (err) {
+      res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+module.exports = router;

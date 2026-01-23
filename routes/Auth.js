@@ -91,4 +91,18 @@ router.post('/logout', (req, res) => {
     res.status(200).json({ message: 'Logged out successfully' });
 });
 
+router.get("/me", userAuth, (req, res) => {
+    res.status(200).json({
+      user: {
+        _id: req.user._id,
+        firstName: req.user.firstName,
+        lastName: req.user.lastName,
+        email: req.user.email,
+        bio: req.user.bio,
+        photoUrl: req.user.photoUrl,
+        createdAt: req.user.createdAt,
+      },
+    });
+  });
+
 module.exports = router;
