@@ -12,12 +12,14 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "joi": "^17.13.3",
     "mongoose": "^8.16.4",
+    "pdf-extraction": "^1.0.2",
     "salt": "^0.5.5"
   }
 }
