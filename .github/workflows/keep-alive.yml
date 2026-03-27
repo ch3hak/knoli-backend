@@ -1,0 +1,15 @@
+name: Keep KNOLI Backend Alive
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ping KNOLI backend
+        run: |
+          curl -f -s https://knoli-backend.onrender.com/ping || exit 1
