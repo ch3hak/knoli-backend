@@ -1,16 +1,22 @@
-name: Keep KNOLI Backend Alive
+name: Keep Knoli Backend Alive
 
 on:
   schedule:
-    - cron: "*/5 * * * *"
+    - cron: "*/3 * * * *"
   workflow_dispatch:
 
 jobs:
   ping:
     runs-on: ubuntu-latest
+    timeout-minutes: 2
 
     steps:
-    - name: Keep KNOLI warm
+    - name: Keep Knoli warm
       run: |
-        curl -f -s https://knoli-backend.onrender.com/ping
-        curl -f -s https://knoli-backend.onrender.com/api/deck/getAll || true
+          for i in 1 2 3; do
+            if curl --max-time 10 -f -s https://knoli-backend.onrender.com/ping > /dev/null; then
+              break
+            else
+              sleep 5
+            fi
+          done
